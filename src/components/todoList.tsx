@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../redux/store/store';
-import { fetchTodos, addTodo, updateTodo, deleteTodo } from '../redux/reducers/todoSlice';
-import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, TextField, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { fetchTodos, updateTodo, deleteTodo } from '../redux/reducers/todoSlice';
+import { List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, TextField, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Box, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const TodoList: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const todos = useSelector((state: RootState) => state.todos.todos);
-  console.log("todos in todoList Component",todos);
-  
   const status = useSelector((state: RootState) => state.todos.status);
   const error = useSelector((state: RootState) => state.todos.error);
 
-  const [newTodo, setNewTodo] = useState('');
   const [editTodo, setEditTodo] = useState<{ id: number, todo: string } | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -23,13 +20,6 @@ const TodoList: React.FC = () => {
       dispatch(fetchTodos());
     }
   }, [status, dispatch]);
-
-  // const handleAddTodo = () => {
-  //   if (newTodo.trim()) {
-  //     dispatch(addTodo({ todo: newTodo, completed: false }));
-  //     setNewTodo('');
-  //   }
-  // };
 
   const handleEditClick = (todo: { id: number, todo: string }) => {
     setEditTodo(todo);
@@ -53,36 +43,113 @@ const TodoList: React.FC = () => {
   };
 
   if (status === 'loading') {
-    return <CircularProgress />;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          backgroundColor: 'background.default',
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (status === 'failed') {
-    return <div>{error}</div>;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          backgroundColor: 'background.default',
+          padding: 2,
+        }}
+      >
+        <Typography color="error" variant="h6">
+          {error}
+        </Typography>
+      </Box>
+    );
   }
 
   return (
-    <div>
-      {/* <div style={{ marginBottom: '16px' }}>
-        <TextField
-          label="New Todo"
-          variant="outlined"
-          value={newTodo}
-          onChange={(e) => setNewTodo(e.target.value)}
-        />
-        <Button onClick={handleAddTodo} variant="contained" color="primary" style={{ marginLeft: '8px' }}>
-          Add Todo
-        </Button>
-      </div> */}
-
+    <Box
+      sx={{
+        maxWidth: 800,
+        margin: '0 auto',
+        padding: 3,
+        boxShadow: 3,
+        borderRadius: 2,
+        backgroundColor: 'background.paper',
+        position: 'relative',
+        minHeight: '80vh',
+      }}
+    >
+      <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
+        Todo List
+      </Typography>
       <List>
-        {todos.map((todo:any) => (
-          <ListItem key={todo.todo}>
-            <ListItemText primary={todo.todo} secondary={todo.completed ? 'Completed' : 'Pending'} />
+        {todos.map((todo) => (
+          <ListItem
+            key={todo.id}
+            sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              paddingY: 1,
+              '&:last-of-type': {
+                borderBottom: 'none',
+              },
+              backgroundColor: 'background.default',
+              borderRadius: 1,
+              '&:hover': {
+                backgroundColor: 'action.hover',
+              },
+            }}
+          >
+            <ListItemText
+              primary={todo.todo}
+              secondary={todo.completed ? 'Completed' : 'Pending'}
+              sx={{
+                '& .MuiListItemText-primary': {
+                  fontWeight: 'bold',
+                  color: 'text.primary',
+                },
+                '& .MuiListItemText-secondary': {
+                  color: 'text.secondary',
+                },
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                width: '250px',
+                textAlign: 'left',
+                marginRight: 3,
+                '&:hover': {
+                  textOverflow: 'initial',
+                  overflow: 'auto',
+                  whiteSpace: 'normal',
+                },
+              }}
+            />
             <ListItemSecondaryAction>
-              <IconButton edge="end" aria-label="edit" onClick={() => handleEditClick(todo)}>
+              <IconButton
+                edge="end"
+                aria-label="edit"
+                onClick={() => handleEditClick(todo)}
+                sx={{ color: 'primary.main', '&:hover': { color: 'primary.dark' } }}
+              >
                 <EditIcon />
               </IconButton>
-              <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteTodo(todo.id)}>
+              <IconButton
+                edge="end"
+                aria-label="delete"
+                onClick={() => handleDeleteTodo(todo.id)}
+                sx={{ color: 'error.main', '&:hover': { color: 'error.dark' } }}
+              >
                 <DeleteIcon />
               </IconButton>
             </ListItemSecondaryAction>
@@ -102,6 +169,7 @@ const TodoList: React.FC = () => {
             variant="outlined"
             value={editTodo?.todo || ''}
             onChange={(e) => setEditTodo({ ...editTodo, todo: e.target.value } as any)}
+            sx={{ marginBottom: 2 }}
           />
         </DialogContent>
         <DialogActions>
@@ -113,7 +181,7 @@ const TodoList: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Box>
   );
 };
 
