@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { addTodo } from '../redux/reducers/todoSlice';
+import { addTodo } from '../../redux/reducers/todoSlice';
 import { TextField, Button, Snackbar, Alert, FormControlLabel, Checkbox, Box, Typography } from '@mui/material';
-import { AppDispatch } from '../redux/store/store';
+import { AppDispatch } from '../../redux/store/store';
+import { addTodoStyles } from '../Add Todo/AddTodoStyles'; // Adjust the import path
 
 const AddTodo: React.FC = () => {
   const [todo, setTodo] = useState<string>('');
@@ -33,21 +34,12 @@ const AddTodo: React.FC = () => {
   };
 
   return (
-    <Box
-      sx={{
-        maxWidth: 600,
-        margin: '0 auto',
-        padding: 3,
-        boxShadow: 3,
-        borderRadius: 2,
-        backgroundColor: 'background.paper'
-      }}
-    >
-      <Typography variant="h5" sx={{ marginBottom: 2 }}>
+    <Box sx={addTodoStyles.container}>
+      <Typography variant="h5" sx={addTodoStyles.heading}>
         Add New Todo
       </Typography>
       <form onSubmit={handleSubmit}>
-        <Box sx={{ marginBottom: 2 }}>
+        <Box sx={addTodoStyles.textFieldContainer}>
           <TextField
             label="Todo"
             value={todo}
@@ -55,11 +47,7 @@ const AddTodo: React.FC = () => {
             fullWidth
             variant="outlined"
             size="small"
-            sx={{
-              marginBottom: 2,
-              backgroundColor: 'background.default',
-              borderRadius: 1
-            }}
+            sx={addTodoStyles.textField}
           />
         </Box>
         <FormControlLabel
@@ -67,17 +55,17 @@ const AddTodo: React.FC = () => {
             <Checkbox
               checked={completed}
               onChange={(e) => setCompleted(e.target.checked)}
-              sx={{ color: 'primary.main' }}
+              sx={addTodoStyles.checkbox}
             />
           }
           label="Completed"
-          sx={{ marginBottom: 2 }}
+          sx={addTodoStyles.formControlLabel}
         />
         <Button
           type="submit"
           variant="contained"
           color="primary"
-          sx={{ width: '100%', padding: '10px', borderRadius: 1 }}
+          sx={addTodoStyles.button}
         >
           Add Todo
         </Button>
@@ -87,7 +75,7 @@ const AddTodo: React.FC = () => {
           open={!!error}
           autoHideDuration={6000}
           onClose={handleCloseSnackbar}
-          sx={{ marginTop: 2 }}
+          sx={addTodoStyles.snackbar}
         >
           <Alert onClose={handleCloseSnackbar} severity="error">
             {error}
